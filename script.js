@@ -11,34 +11,40 @@ const winningCombinations = [
   [2, 4, 6]
 ];
 
+let boardArray = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+
 const winningMessageTextElement = document.querySelector(
   "[data-winning-message-text]"
 );
 const winningMessageElement = document.getElementById("winningMessage");
 const cellElements = document.querySelectorAll("[data-cell]");
-const restartButton = document.getElementById('restartButton')
+const restartButton = document.getElementById("restartButton");
 const board = document.getElementById("board");
 let playerTurn;
+let currentClass = playerTurn ? x_class : circle_class
+let cell
 
 playGame();
 
-restartButton.addEventListener('click', playGame)
+restartButton.addEventListener("click", playGame);
 
 function playGame() {
   playerTurn = true;
+  boardArray = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   cellElements.forEach(cell => {
-    cell.classList.remove(x_class)
-    cell.classList.remove(circle_class)
-    cell.removeEventListener('click', handleClick)
+    cell.classList.remove(x_class);
+    cell.classList.remove(circle_class);
+    cell.removeEventListener("click", handleClick);
     cell.addEventListener("click", handleClick, { once: true });
   });
   setBoardHoverClass();
-  winningMessageElement.classList.remove('show')
+  winningMessageElement.classList.remove("show");
 }
 
 function handleClick(e) {
-  const cell = e.target;
-  const currentClass = playerTurn ? x_class : circle_class;
+  cell = e.target;
+  boardArray.splice(boardArray.indexOf(parseInt(e.target.id)), 1)
+  currentClass = playerTurn ? x_class : circle_class;
   placeMark(cell, currentClass);
   if (checkWin(currentClass)) {
     endGame(false);
@@ -46,22 +52,14 @@ function handleClick(e) {
     endGame(true);
   } else {
     switchTurn();
-    setBoardHoverClass();
+    computerMove(currentClass)
   }
-}
-
-//placeMark
-//Check for win
-//check for draw
-//change turn
-// call on computerMove
-
-function placeMark(cell, currentClass) {
-  cell.classList.add(currentClass);
 }
 
 function switchTurn() {
   playerTurn = !playerTurn;
+  currentClass = playerTurn ? x_class : circle_class;
+  setBoardHoverClass()
 }
 
 function setBoardHoverClass() {
@@ -84,7 +82,7 @@ function checkWin(currentClass) {
 
 function endGame(draw) {
   if (draw) {
-    winningMessageTextElement.innerText = 'Draw!'
+    winningMessageTextElement.innerText = "Draw!";
   } else {
     winningMessageTextElement.innerHTML = `${
       playerTurn ? "Player" : "Computer"
@@ -95,6 +93,21 @@ function endGame(draw) {
 
 function isDraw() {
   return [...cellElements].every(cell => {
-    return cell.classList.contains(x_class) || cell.classList.contains(circle_class)
-  })
+    return (
+      cell.classList.contains(x_class) || cell.classList.contains(circle_class)
+    );
+  });
+}
+
+function computerMove(currentClass) {
+  let cpuMove = boardArray[Math.floor(Math.random()*boardArray.length)]
+  boardArray.splice(boardArray.indexOf(parseInt(cpuMove)), 1)
+  cell = document.getElementById(cpuMove)
+  currentClass = playerTurn ? x_class : circle_class
+  placeMark(cell, currentClass)
+  switchTurn()
+}
+
+function placeMark(cell, currentClass) {
+  cell.classList.add(currentClass);
 }

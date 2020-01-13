@@ -21,15 +21,14 @@ const cellElements = document.querySelectorAll("[data-cell]");
 const restartButton = document.getElementById("restartButton");
 const board = document.getElementById("board");
 let playerTurn;
-let currentClass = playerTurn ? x_class : circle_class
-let cell
+let currentClass = playerTurn ? x_class : circle_class;
+let cell;
 
 playGame();
 
 restartButton.addEventListener("click", playGame);
 
 function playGame() {
-  playerTurn = true;
   boardArray = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   cellElements.forEach(cell => {
     cell.classList.remove(x_class);
@@ -39,11 +38,17 @@ function playGame() {
   });
   setBoardHoverClass();
   winningMessageElement.classList.remove("show");
+  if (Math.random() > 0.5) {
+    playerTurn = true;
+  } else {
+    playerTurn = false;
+    computerMove();
+  }
 }
 
 function handleClick(e) {
   cell = e.target;
-  boardArray.splice(boardArray.indexOf(parseInt(e.target.id)), 1)
+  boardArray.splice(boardArray.indexOf(parseInt(e.target.id)), 1);
   currentClass = playerTurn ? x_class : circle_class;
   placeMark(cell, currentClass);
   if (checkWin(currentClass)) {
@@ -52,14 +57,14 @@ function handleClick(e) {
     endGame(true);
   } else {
     switchTurn();
-    computerMove(currentClass)
+    computerMove(currentClass);
   }
 }
 
 function switchTurn() {
   playerTurn = !playerTurn;
   currentClass = playerTurn ? x_class : circle_class;
-  setBoardHoverClass()
+  setBoardHoverClass();
 }
 
 function setBoardHoverClass() {
@@ -100,12 +105,12 @@ function isDraw() {
 }
 
 function computerMove(currentClass) {
-  let cpuMove = boardArray[Math.floor(Math.random()*boardArray.length)]
-  boardArray.splice(boardArray.indexOf(parseInt(cpuMove)), 1)
-  cell = document.getElementById(cpuMove)
-  currentClass = playerTurn ? x_class : circle_class
-  placeMark(cell, currentClass)
-  switchTurn()
+  let cpuMove = boardArray[Math.floor(Math.random() * boardArray.length)];
+  boardArray.splice(boardArray.indexOf(parseInt(cpuMove)), 1);
+  cell = document.getElementById(cpuMove);
+  currentClass = playerTurn ? x_class : circle_class;
+  placeMark(cell, currentClass);
+  switchTurn();
 }
 
 function placeMark(cell, currentClass) {
